@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true })); // parses incoming requests with URL-encoded payloads (form data)
 app.use(express.json()); //parses incoming requests with JSON payloads
 
-// Connecting to the database
+// Connecting to the database locally
 mongoose
   .connect('mongodb://localhost:27017/TOAdb', {
     useNewUrlParser: true,

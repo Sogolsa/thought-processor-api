@@ -1,6 +1,6 @@
 # Thought Organizer API
 
-- building an API to help organizing thoughts to help with anxiety
+- Building an API to help organizing thoughts to help with anxiety, in this API, users can list all of their thoughts by name (or whatever is causing anxiety or worry), then they can add more details and information about each thought, identifying potential problems, and coming up with possible solutions, and they can also add a positive affirmation to help cope with their stress if any.
 - Using Node.js, Express.js and MongoDB
 
 # Requirements:
