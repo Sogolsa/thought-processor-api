@@ -9,10 +9,12 @@ import {
   registerUser,
   deleteUser,
   getUsers,
+  updateUser,
+  logoutUser,
 } from '../controllers/userControllers';
 import passport from 'passport';
 import loginRoute from '../../auth';
-import { check } from 'express-validator';
+import { check, validationResult } from 'express-validator';
 
 const routes = (app) => {
   // Initialize the login route
@@ -20,12 +22,15 @@ const routes = (app) => {
 
   //users endpoint
   app
+    .route('/logout')
+    .post(passport.authenticate('jwt', { session: false }), logoutUser);
+  app
     .route('/users')
-    .get(passport.authenticate('jwt', { session: false }), getUsers)
+    // .get(passport.authenticate('jwt', { session: false }), getUsers)
     .post(
       [
         // Validation logic to register user
-        check('userName', 'userName is required').isLength({ min: 4 }), //Minimum value of 5 character only is allowed
+        check('userName', 'userName is required').isLength({ min: 1 }),
         check(
           'userName',
           'userName contains non alphanumeric characters-not allowed.'
@@ -37,10 +42,39 @@ const routes = (app) => {
     );
 
   app
-    .route('/users/:userName')
-    .get((req, res) => res.send('GET request successful'))
-    .put((req, res) => res.send('PUT request successful.'))
-    .delete(passport.authenticate('jwt', { session: false }, deleteUser));
+    .route('/users/:userId')
+    .put(
+      passport.authenticate('jwt', { session: false }),
+      [
+        // Validation logic to update
+        check('userName')
+          .isLength({ min: 1 }) // Ensure userName is at least 4 characters
+          .withMessage('userName must be at least 4 characters long.')
+          .isAlphanumeric()
+          .withMessage(
+            'userName contains non-alphanumeric characters - not allowed.'
+          ),
+        check('Password')
+          .isLength({ min: 6 }) // Ensure Password is at least 6 characters
+          .withMessage('Password must be at least 6 characters long.')
+          .not()
+          .isEmpty()
+          .withMessage('Password is required.'),
+        check('Email')
+          .optional() // Email is optional
+          .isEmail()
+          .withMessage('Email does not appear to be valid.'),
+      ],
+      (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          return res.status(422).json({ errors: errors.array() });
+        }
+        next(); // Proceed to updateUser if validation passed
+      },
+      updateUser
+    )
+    .delete(passport.authenticate('jwt', { session: false }), deleteUser);
 
   app
     .route('/thoughts')
@@ -51,9 +85,6 @@ const routes = (app) => {
     // .get(passport.authenticate('jwt', { session: false }), getThoughtByName)
     .put(passport.authenticate('jwt', { session: false }), updateThought)
     .delete(passport.authenticate('jwt', { session: false }), deleteThought);
-  app
-    .route('users/:userName/thoughts/:thoughtId')
-    .post(passport.authenticate('jwt', { session: false }));
 };
 
 export default routes;

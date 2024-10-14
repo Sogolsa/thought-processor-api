@@ -50,16 +50,55 @@ export const getUsers = async (req, res) => {
   }
 };
 
+export const updateUser = async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.user._id });
+    if (!user) {
+      return res
+        .status(404)
+        .send('User not found or you do not have permission to update it.');
+    }
+
+    if (req.body.userName) {
+      user.userName = req.body.userName;
+    }
+    if (req.body.Password) {
+      const hashedPassword = User.hashPassword(req.body.Password); // Hash the new password
+      user.Password = hashedPassword; // Set the hashed password
+    }
+    if (req.body.Email) {
+      user.Email = req.body.Email;
+    }
+
+    const updatedUser = await user.save();
+    return res.status(201).json(updatedUser);
+  } catch (err) {
+    return res
+      .status(500)
+      .send('There was an error updating the user information.');
+  }
+};
+
 export const deleteUser = async (req, res) => {
-  await User.findOneAndDelete({ userName: req.params.userName })
+  await User.findOneAndDelete({ _id: req.params.userId })
     .then((user) => {
       if (!user) {
-        res.status(400).send(res.params.userName + ' was not deleted.');
+        res
+          .status(400)
+          .send(requestAnimationFrame.params.userId + ' was not deleted.');
       } else {
-        res.status(200).send(res.params.userName + ' was deleted.');
+        res.status(200).send(req.params.userId + ' was deleted.');
       }
     })
     .catch((error) => {
       res.status(500).send('Something went wrong.', error);
     });
+};
+
+export const logoutUser = (req, res) => {
+  res
+    .status(200)
+    .send(
+      'Successfully logged out. Please remove the token on the client side.'
+    );
 };
