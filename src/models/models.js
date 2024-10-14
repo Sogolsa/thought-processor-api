@@ -58,7 +58,7 @@ userSchema.statics.hashPassword = (password) => {
 };
 
 // Adding validatePassword to compare hashed passwords
-userSchema.methods.validatePassword = (password) => {
+userSchema.methods.validatePassword = function (password) {
   return bcrypt.compareSync(password, this.password);
 };
 

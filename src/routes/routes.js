@@ -4,7 +4,7 @@ import {
   getThoughtByName,
   updateThought,
   deleteThought,
-} from '../controllers/controllers';
+} from '../controllers/thoughtControllers';
 
 const routes = (app) => {
   //users endpoint

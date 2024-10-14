@@ -1,4 +1,5 @@
-import { Thought } from '../models/models';
+import models from '../models/models';
+const { Thought } = models;
 
 /* 
 First controller to pass to the endpoints in routes,
@@ -50,16 +51,11 @@ export const updateThought = async (req, res) => {
 };
 
 export const deleteThought = async (req, res) => {
-  await Thought.findOneAndDelete({ thoughtName: req.params.thoughtName }).then(
-    () => {
-      res
-        .status(200)
-        .send(req.params.thoughtName + ' was deleted.')
-        .catch((err) =>
-          res
-            .status(500)
-            .send('Could not delete ' + req.params.thoughtName, err)
-        );
-    }
-  );
+  await Thought.findOneAndDelete({ thoughtName: req.params.thoughtName })
+    .then(() => {
+      res.status(200).send(req.params.thoughtName + ' was deleted.');
+    })
+    .catch((err) => {
+      res.status(500).send('Could not delete ' + req.params.thoughtName, err);
+    });
 };
