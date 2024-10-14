@@ -1,0 +1,26 @@
+{
+  "name": "thought-organizer-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./index.js --exec babel-node"
+  },
+  "author": "Sogol Saadat",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.1",
+    "nodemon": "^3.1.7",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.25.7",
+    "@babel/core": "^7.25.8",
+    "@babel/node": "^7.25.7",
+    "@babel/preset-env": "^7.25.8"
+  }
+}
