@@ -17,3 +17,11 @@ npm install - - save-dev @babel/core @babel/cli @babel/node @babel/preset-env
 ```
 
 - Install nodemon and body parser: `npm install nodemon body-parser`
+-
+
+```bash
+npm install passport passport-jwt jsonwebtoken passport-local
+```
+
+- `npm install dotenv`
+  `npm install express-validator`

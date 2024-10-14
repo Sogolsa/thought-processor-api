@@ -1,8 +1,11 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import { Router } from 'express';
 
 import './passport';
+
+import dotenv from 'dotenv';
+// Load environment variables from .env file
+dotenv.config();
 
 // jwt secret key
 const jwtSecret = process.env.JWT_SECRET;
@@ -19,9 +22,16 @@ const generateJWTToken = (user) => {
 const loginRoute = (router) => {
   router.post('/login', async (req, res) => {
     passport.authenticate('local', { session: false }, (error, user, info) => {
-      if (error || !user) {
+      if (error) {
+        console.error('Authentication Error:', error); // Log full error
         return res.status(400).json({
-          message: 'Something went wrong',
+          message: 'An error occurred during authentication.',
+          error,
+        });
+      }
+      if (!user) {
+        return res.status(400).json({
+          message: info.message || 'Something went wrong.',
           user: user,
         });
       }

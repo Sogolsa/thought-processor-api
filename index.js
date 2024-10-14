@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 
 import routes from './src/routes/routes';
+import './passport';
 
 // initializing express application and setting up the local port
 const app = express();

@@ -10,7 +10,7 @@ export const thoughtSchema = new Schema({
   },
   Description: {
     type: String,
-    required: true,
+    required: false,
   },
   Emotions: {
     type: [String],
@@ -59,7 +59,7 @@ userSchema.statics.hashPassword = (password) => {
 
 // Adding validatePassword to compare hashed passwords
 userSchema.methods.validatePassword = function (password) {
-  return bcrypt.compareSync(password, this.password);
+  return bcrypt.compareSync(password, this.Password);
 };
 
 // Creating the models
