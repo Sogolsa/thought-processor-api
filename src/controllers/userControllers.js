@@ -71,7 +71,7 @@ export const updateUser = async (req, res) => {
     }
 
     const updatedUser = await user.save();
-    return res.status(201).json(updatedUser);
+    return res.status(200).json(updatedUser);
   } catch (err) {
     return res
       .status(500)
@@ -83,9 +83,7 @@ export const deleteUser = async (req, res) => {
   await User.findOneAndDelete({ _id: req.params.userId })
     .then((user) => {
       if (!user) {
-        res
-          .status(400)
-          .send(requestAnimationFrame.params.userId + ' was not deleted.');
+        res.status(404).send(req.params.userId + ' was not deleted.');
       } else {
         res.status(200).send(req.params.userId + ' was deleted.');
       }

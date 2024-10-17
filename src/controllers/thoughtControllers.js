@@ -93,7 +93,14 @@ export const deleteThought = async (req, res) => {
     _id: req.params.thoughtId,
     User: req.user._id,
   })
-    .then(() => {
+    .then((thought) => {
+      if (!thought) {
+        return res
+          .status(404)
+          .send(
+            'Thought not found or you do not have permission to delete it.'
+          );
+      }
       res.status(200).send(req.params.thoughtId + ' was deleted.');
     })
     .catch((err) => {

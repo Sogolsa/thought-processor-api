@@ -2,6 +2,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import swaggerUi from 'swagger-ui-express';
+import yaml from 'yamljs';
 
 import routes from './src/routes/routes';
 import './passport';
@@ -11,6 +13,12 @@ dotenv.config();
 
 // initializing express application
 const app = express();
+
+// Importing Yaml file
+const swaggerDocument = yaml.load('./swagger.yaml');
+
+// Setting up Swagger UI middleware
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Middleware setup
 app.use(cors());
@@ -39,7 +47,7 @@ routes(app);
 
 // First Endpoint
 app.use('/', (req, res) => {
-  res.send('Welcome to AnxietyJournal!');
+  res.send('Welcome to Thought Tracking Journal API!');
 });
 
 // Port setup
