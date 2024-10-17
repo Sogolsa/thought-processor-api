@@ -30,3 +30,5 @@ npm install passport passport-jwt jsonwebtoken passport-local
 ## Documentation
 
 1. `npm install swagger-ui-express swagger-jsdoc yamljs`
+2. Set up swagger in index.js
+3. visit "localhost:3000/api-docs" for documentation
