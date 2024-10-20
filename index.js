@@ -26,21 +26,19 @@ app.use(express.urlencoded({ extended: true })); // parses incoming requests wit
 app.use(express.json()); //parses incoming requests with JSON payloads
 
 // Connecting to the database locally
+// mongoose
+//   .connect('mongodb://localhost:27017/TOAdb', {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => console.log('MongoDB connected.'))
+//   .catch((err) => console.log('MongoDB connection error: ', err));
+
+// Connecting the application to mongoDB atlas
 mongoose
-  .connect('mongodb://localhost:27017/TOAdb', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.CONNECTION_URI)
   .then(() => console.log('MongoDB connected.'))
   .catch((err) => console.log('MongoDB connection error: ', err));
-
-// mongoose
-// .connect(process.env.CONNECTION_URI, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// })
-// .then(() => console.log('MongoDB connected.'))
-// .catch((err) => console.log('MongoDB connection error: ', err));
 
 // Running the routes inside the app
 routes(app);
@@ -48,6 +46,11 @@ routes(app);
 // First Endpoint
 app.use('/', (req, res) => {
   res.send('Welcome to Thought Tracking Journal API!');
+});
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
 
 // Port setup
