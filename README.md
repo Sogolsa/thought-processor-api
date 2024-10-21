@@ -58,3 +58,7 @@ Step 2: In package.json
     "debug": "node --debug ./build/index.js"
   },
 ```
+
+## API deployed on Heroku
+
+https://thought-tracker-journal-4688a4169626.herokuapp.com/
