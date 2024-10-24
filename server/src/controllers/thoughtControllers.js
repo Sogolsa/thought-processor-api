@@ -1,5 +1,6 @@
 import models from '../models/models';
 const { Thought } = models;
+import { encrypt, decrypt } from '../utils/encryption';
 
 /* 
 First controller to pass to the endpoints in routes,
@@ -40,6 +41,9 @@ export const updateThought = async (req, res) => {
     }
 
     // Update only the fields provided in the request body
+    if (req.body.thoughtName) {
+      thought.thoughtName = req.body.thoughtName;
+    }
     if (req.body.Description) {
       thought.Description = req.body.Description;
     }
@@ -79,6 +83,8 @@ export const getOwnThoughts = async (req, res) => {
 
     // Send the found thoughts
     res.status(200).json(thoughts);
+    // const decryptedThoughts = thoughts.map((thought) => thought.toJSON());
+    // res.status(200).json(decryptedThoughts);
   } catch (err) {
     console.error('Error fetching thoughts:', err);
     return res.status(500).send('There was an error fetching thoughts.');

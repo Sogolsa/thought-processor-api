@@ -8,7 +8,8 @@
     "build-server": "babel -d ./build ./server -s",
     "build": "npm run clean && npm run build-server",
     "start": "node ./build/index.js",
-    "debug": "node --debug ./build/index.js"
+    "debug": "node --debug ./build/index.js",
+    "dev": "nodemon ./build/index.js"
   },
   "author": "Sogol Saadat",
   "license": "ISC",
