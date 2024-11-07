@@ -21,10 +21,10 @@ paths:
                 userName:
                   type: string
                   example: 'exampleUser'
-                password:
+                Password:
                   type: string
                   example: 'password123'
-                email:
+                Email:
                   type: string
                   example: 'exampleUser@example.com'
       responses:
@@ -55,10 +55,10 @@ paths:
                 userName:
                   type: string
                   example: 'newUserName'
-                password:
+                Password:
                   type: string
                   example: 'newPassword123'
-                email:
+                Email:
                   type: string
                   example: 'newEmail@example.com'
       responses:
@@ -96,27 +96,27 @@ paths:
                 thoughtName:
                   type: string
                   example: 'Thought1'
-                description:
+                Description:
                   type: string
                   example: 'Details about the thought'
-                emotions:
+                Emotions:
                   type: array
                   items:
                     type: string
                     example: 'anxiety'
-                problems:
+                Problems:
                   type: array
                   items:
                     type: string
-                    example: 'stress at work'
+                    example: 'this is an example problem'
                 possibleSolutions:
                   type: array
                   items:
                     type: string
-                    example: 'talk to a friend'
-                affirmation:
+                    example: 'This is an example solution.'
+                Affirmation:
                   type: string
-                  example: 'I am capable of handling my feelings.'
+                  example: 'I got this.'
                 user:
                   type: string
                   format: uuid
@@ -153,25 +153,25 @@ paths:
                 thoughtName:
                   type: string
                   example: 'Updated Thought'
-                description:
+                Description:
                   type: string
                   example: 'Updated details about the thought'
-                emotions:
+                Emotions:
                   type: array
                   items:
                     type: string
                     example: 'happiness'
-                problems:
+                Problems:
                   type: array
                   items:
                     type: string
-                    example: 'fear of failure'
+                    example: 'Adding or updating problems'
                 possibleSolutions:
                   type: array
                   items:
                     type: string
                     example: 'plan ahead'
-                affirmation:
+                Affirmation:
                   type: string
                   example: 'I am strong and capable.'
                 user:
