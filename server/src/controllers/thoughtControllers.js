@@ -77,9 +77,9 @@ export const getOwnThoughts = async (req, res) => {
     const thoughts = await Thought.find({ User: req.user._id });
 
     // Check if there are no thoughts
-    if (thoughts.length === 0) {
-      return res.status(404).json({ message: 'No thoughts found.' });
-    }
+    // if (thoughts.length === 0) {
+    //   return res.status(404).json({ message: 'No thoughts found.' });
+    // }
 
     // Send the found thoughts
     res.status(200).json(thoughts);

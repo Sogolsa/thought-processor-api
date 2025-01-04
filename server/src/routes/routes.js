@@ -82,7 +82,7 @@ const routes = (app) => {
     .get(passport.authenticate('jwt', { session: false }), getOwnThoughts);
   app
     .route('/thoughts/:thoughtId')
-    // .get(passport.authenticate('jwt', { session: false }), getThoughtByName)
+    .get(passport.authenticate('jwt', { session: false }), getThoughtByName)
     .put(passport.authenticate('jwt', { session: false }), updateThought)
     .delete(passport.authenticate('jwt', { session: false }), deleteThought);
 };
