@@ -1,6 +1,6 @@
 import models from '../models/models';
 const { Thought } = models;
-import { encrypt, decrypt } from '../utils/encryption';
+// import { encrypt, decrypt } from '../utils/encryption';
 
 /* 
 First controller to pass to the endpoints in routes,
@@ -83,22 +83,44 @@ export const getOwnThoughts = async (req, res) => {
 
     // Send the found thoughts
     res.status(200).json(thoughts);
-    // const decryptedThoughts = thoughts.map((thought) => thought.toJSON());
-    // res.status(200).json(decryptedThoughts);
   } catch (err) {
     console.error('Error fetching thoughts:', err);
     return res.status(500).send('There was an error fetching thoughts.');
   }
 };
 
-export const getThoughtByName = async (req, res) => {
-  await Thought.findOne({ thoughtName: req.params.thoughtName })
-    .then((thought) => {
-      res.status(201).json(thought);
-    })
-    .catch((err) => {
-      res.status(500).send('Unable to retrieve the thought', err);
-    });
+// export const getThoughtByName = async (req, res) => {
+//   console.log('Received thoughtName:', req.params.thoughtName);
+
+//   await Thought.findOne({ thoughtName: req.params.thoughtName })
+//     .then((thought) => {
+//       if (!thought) {
+//         return res.status(404).json({ message: 'Thought not found.' });
+//       }
+//       res.status(200).json(thought);
+//     })
+//     .catch((err) => {
+//       res.status(500).send('Unable to retrieve the thought', err);
+//     });
+// };
+
+export const getThoughtById = async (req, res) => {
+  console.log('Received request for thoughtId:', req.params.thoughtId);
+
+  try {
+    const thoughtId = req.params.thoughtId;
+
+    const thought = await Thought.findById(thoughtId);
+
+    if (!thought) {
+      return res.status(404).json({ message: 'Thought not found' });
+    }
+
+    res.status(200).json(thought);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 };
 
 export const deleteThought = async (req, res) => {
@@ -114,7 +136,7 @@ export const deleteThought = async (req, res) => {
             'Thought not found or you do not have permission to delete it.'
           );
       }
-      res.status(200).send(req.params.thoughtId + ' was deleted.');
+      res.status(200).json({ message: req.params.thoughtId + ' was deleted.' });
     })
     .catch((err) => {
       res.status(500).send('Could not delete ' + req.params.thoughtId, err);

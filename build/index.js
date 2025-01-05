@@ -15,12 +15,6 @@ _dotenv["default"].config();
 // initializing express application
 var app = (0, _express["default"])();
 
-// Importing Yaml file
-var swaggerDocument = _yamljs["default"].load('./swagger.yaml');
-
-// Setting up Swagger UI middleware
-app.use('/api-docs', _swaggerUiExpress["default"].serve, _swaggerUiExpress["default"].setup(swaggerDocument));
-
 // Middleware setup
 app.use((0, _cors["default"])());
 app.use(_express["default"].urlencoded({
@@ -38,10 +32,17 @@ app.use(_express["default"].json()); //parses incoming requests with JSON payloa
 //   .catch((err) => console.log('MongoDB connection error: ', err));
 
 // Connecting the application to mongoDB atlas
-_mongoose["default"].connect(process.env.CONNECTION_URI).then(function () {
+_mongoose["default"].connect(process.env.CONNECTION_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(function () {
   return console.log('MongoDB connected.');
 })["catch"](function (err) {
   return console.log('MongoDB connection error: ', err);
+});
+app.use(function (req, res, next) {
+  console.log("Incoming request: ".concat(req.method, " ").concat(req.url));
+  next();
 });
 
 // Running the routes inside the app
@@ -50,6 +51,16 @@ _mongoose["default"].connect(process.env.CONNECTION_URI).then(function () {
 // First Endpoint
 app.use('/', function (req, res) {
   res.send('Welcome to Thought Tracking Journal API!');
+});
+
+//Importing Yaml file
+var swaggerDocument = _yamljs["default"].load('./swagger.yaml');
+
+//Setting up Swagger UI middleware
+app.use('/api-docs', _swaggerUiExpress["default"].serve, _swaggerUiExpress["default"].setup(swaggerDocument));
+app.use(function (req, res) {
+  console.log('Fallback handler triggered');
+  res.status(404).send('Route not found.');
 });
 app.use(function (err, req, res, next) {
   console.error(err.stack);

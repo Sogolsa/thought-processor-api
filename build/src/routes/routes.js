@@ -54,13 +54,14 @@ var routes = function routes(app) {
   }), _thoughtControllers.addNewThought).get(_passport["default"].authenticate('jwt', {
     session: false
   }), _thoughtControllers.getOwnThoughts);
-  app.route('/thoughts/:thoughtId')
-  // .get(passport.authenticate('jwt', { session: false }), getThoughtByName)
-  .put(_passport["default"].authenticate('jwt', {
+  app.route('/thoughts/:thoughtId').get(_passport["default"].authenticate('jwt', {
+    session: false
+  }), _thoughtControllers.getThoughtById).put(_passport["default"].authenticate('jwt', {
     session: false
   }), _thoughtControllers.updateThought)["delete"](_passport["default"].authenticate('jwt', {
     session: false
   }), _thoughtControllers.deleteThought);
+  console.log('Routes registered.');
 };
 var _default = exports["default"] = routes;
 //# sourceMappingURL=routes.js.map

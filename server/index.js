@@ -14,12 +14,6 @@ dotenv.config();
 // initializing express application
 const app = express();
 
-// Importing Yaml file
-const swaggerDocument = yaml.load('./swagger.yaml');
-
-// Setting up Swagger UI middleware
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
 // Middleware setup
 app.use(cors());
 app.use(express.urlencoded({ extended: true })); // parses incoming requests with URL-encoded payloads (form data)
@@ -36,9 +30,17 @@ app.use(express.json()); //parses incoming requests with JSON payloads
 
 // Connecting the application to mongoDB atlas
 mongoose
-  .connect(process.env.CONNECTION_URI)
+  .connect(process.env.CONNECTION_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log('MongoDB connected.'))
   .catch((err) => console.log('MongoDB connection error: ', err));
+
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
 
 // Running the routes inside the app
 routes(app);
@@ -46,6 +48,17 @@ routes(app);
 // First Endpoint
 app.use('/', (req, res) => {
   res.send('Welcome to Thought Tracking Journal API!');
+});
+
+//Importing Yaml file
+const swaggerDocument = yaml.load('./swagger.yaml');
+
+//Setting up Swagger UI middleware
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use((req, res) => {
+  console.log('Fallback handler triggered');
+  res.status(404).send('Route not found.');
 });
 
 app.use((err, req, res, next) => {

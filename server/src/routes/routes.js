@@ -1,10 +1,11 @@
 import {
   addNewThought,
   getOwnThoughts,
-  getThoughtByName,
   updateThought,
   deleteThought,
+  getThoughtById,
 } from '../controllers/thoughtControllers';
+
 import {
   registerUser,
   deleteUser,
@@ -12,6 +13,7 @@ import {
   updateUser,
   logoutUser,
 } from '../controllers/userControllers';
+
 import passport from 'passport';
 import loginRoute from '../../auth';
 import { check, validationResult } from 'express-validator';
@@ -80,11 +82,14 @@ const routes = (app) => {
     .route('/thoughts')
     .post(passport.authenticate('jwt', { session: false }), addNewThought)
     .get(passport.authenticate('jwt', { session: false }), getOwnThoughts);
+
   app
     .route('/thoughts/:thoughtId')
-    .get(passport.authenticate('jwt', { session: false }), getThoughtByName)
+    .get(passport.authenticate('jwt', { session: false }), getThoughtById)
     .put(passport.authenticate('jwt', { session: false }), updateThought)
     .delete(passport.authenticate('jwt', { session: false }), deleteThought);
+
+  console.log('Routes registered.');
 };
 
 export default routes;
