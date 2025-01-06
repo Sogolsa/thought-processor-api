@@ -10,6 +10,7 @@ import {
   registerUser,
   deleteUser,
   getUsers,
+  getUserById,
   updateUser,
   logoutUser,
 } from '../controllers/userControllers';
@@ -45,6 +46,7 @@ const routes = (app) => {
 
   app
     .route('/users/:userId')
+    .get(passport.authenticate('jwt', { session: false }), getUserById)
     .put(
       passport.authenticate('jwt', { session: false }),
       [

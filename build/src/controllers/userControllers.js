@@ -4,7 +4,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateUser = exports.registerUser = exports.logoutUser = exports.getUsers = exports.deleteUser = void 0;
+exports.updateUser = exports.registerUser = exports.logoutUser = exports.getUsers = exports.getUserById = exports.deleteUser = void 0;
 var _mongoose = _interopRequireDefault(require("mongoose"));
 var _models = _interopRequireDefault(require("../models/models"));
 var _expressValidator = require("express-validator");
@@ -93,24 +93,67 @@ var getUsers = exports.getUsers = /*#__PURE__*/function () {
     return _ref2.apply(this, arguments);
   };
 }();
-var updateUser = exports.updateUser = /*#__PURE__*/function () {
+
+// get user by it's id
+var getUserById = exports.getUserById = /*#__PURE__*/function () {
   var _ref3 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee3(req, res) {
-    var user, hashedPassword, updatedUser;
+    var user;
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
           _context3.prev = 0;
           _context3.next = 3;
-          return User.findOne({
-            _id: req.user._id
-          });
+          return User.findById(req.params.userId).select('-Password');
         case 3:
           user = _context3.sent;
           if (user) {
             _context3.next = 6;
             break;
           }
-          return _context3.abrupt("return", res.status(404).send('User not found or you do not have permission to update it.'));
+          return _context3.abrupt("return", res.status(404).json({
+            message: 'User not found'
+          }));
+        case 6:
+          res.status(200).json(user);
+          _context3.next = 13;
+          break;
+        case 9:
+          _context3.prev = 9;
+          _context3.t0 = _context3["catch"](0);
+          console.error('Error fetching user:', _context3.t0);
+          res.status(500).json({
+            message: 'Server error'
+          });
+        case 13:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3, null, [[0, 9]]);
+  }));
+  return function getUserById(_x5, _x6) {
+    return _ref3.apply(this, arguments);
+  };
+}();
+
+// Update user information
+var updateUser = exports.updateUser = /*#__PURE__*/function () {
+  var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(req, res) {
+    var user, hashedPassword, updatedUser;
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.prev = 0;
+          _context4.next = 3;
+          return User.findOne({
+            _id: req.user._id
+          });
+        case 3:
+          user = _context4.sent;
+          if (user) {
+            _context4.next = 6;
+            break;
+          }
+          return _context4.abrupt("return", res.status(404).send('User not found or you do not have permission to update it.'));
         case 6:
           if (req.body.userName) {
             user.userName = req.body.userName;
@@ -122,31 +165,33 @@ var updateUser = exports.updateUser = /*#__PURE__*/function () {
           if (req.body.Email) {
             user.Email = req.body.Email;
           }
-          _context3.next = 11;
+          _context4.next = 11;
           return user.save();
         case 11:
-          updatedUser = _context3.sent;
-          return _context3.abrupt("return", res.status(200).json(updatedUser));
+          updatedUser = _context4.sent;
+          return _context4.abrupt("return", res.status(200).json(updatedUser));
         case 15:
-          _context3.prev = 15;
-          _context3.t0 = _context3["catch"](0);
-          return _context3.abrupt("return", res.status(500).send('There was an error updating the user information.'));
+          _context4.prev = 15;
+          _context4.t0 = _context4["catch"](0);
+          return _context4.abrupt("return", res.status(500).send('There was an error updating the user information.'));
         case 18:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
-    }, _callee3, null, [[0, 15]]);
+    }, _callee4, null, [[0, 15]]);
   }));
-  return function updateUser(_x5, _x6) {
-    return _ref3.apply(this, arguments);
+  return function updateUser(_x7, _x8) {
+    return _ref4.apply(this, arguments);
   };
 }();
+
+// deregister user
 var deleteUser = exports.deleteUser = /*#__PURE__*/function () {
-  var _ref4 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee4(req, res) {
-    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
-      while (1) switch (_context4.prev = _context4.next) {
+  var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(req, res) {
+    return _regeneratorRuntime().wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
         case 0:
-          _context4.next = 2;
+          _context5.next = 2;
           return User.findOneAndDelete({
             _id: req.params.userId
           }).then(function (user) {
@@ -160,12 +205,12 @@ var deleteUser = exports.deleteUser = /*#__PURE__*/function () {
           });
         case 2:
         case "end":
-          return _context4.stop();
+          return _context5.stop();
       }
-    }, _callee4);
+    }, _callee5);
   }));
-  return function deleteUser(_x7, _x8) {
-    return _ref4.apply(this, arguments);
+  return function deleteUser(_x9, _x10) {
+    return _ref5.apply(this, arguments);
   };
 }();
 var logoutUser = exports.logoutUser = function logoutUser(req, res) {
