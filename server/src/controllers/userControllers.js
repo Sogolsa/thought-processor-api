@@ -53,7 +53,7 @@ export const getUsers = async (req, res) => {
 // get user by it's id
 export const getUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId).select('-Password');
+    const user = await User.findById(req.user._id).select('-Password');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -96,16 +96,18 @@ export const updateUser = async (req, res) => {
 
 // deregister user
 export const deleteUser = async (req, res) => {
-  await User.findOneAndDelete({ _id: req.params.userId })
+  await User.findOneAndDelete(req.user._id) // Delete based on authenticated user's ID
     .then((user) => {
       if (!user) {
-        res.status(404).send(req.params.userId + ' was not deleted.');
+        res.status(404).json({ message: ' was not deleted.' });
       } else {
-        res.status(200).send(req.params.userId + ' was deleted.');
+        res.status(200).json({
+          message: `Your account (${user.userName}) was deleted successfully.`,
+        });
       }
     })
     .catch((error) => {
-      res.status(500).send('Something went wrong.', error);
+      res.status(500).json('Something went wrong.', error);
     });
 };
 

@@ -103,7 +103,7 @@ var getUserById = exports.getUserById = /*#__PURE__*/function () {
         case 0:
           _context3.prev = 0;
           _context3.next = 3;
-          return User.findById(req.params.userId).select('-Password');
+          return User.findById(req.user._id).select('-Password');
         case 3:
           user = _context3.sent;
           if (user) {
@@ -192,16 +192,19 @@ var deleteUser = exports.deleteUser = /*#__PURE__*/function () {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
           _context5.next = 2;
-          return User.findOneAndDelete({
-            _id: req.params.userId
-          }).then(function (user) {
+          return User.findOneAndDelete(req.user._id) // Delete based on authenticated user's ID
+          .then(function (user) {
             if (!user) {
-              res.status(404).send(req.params.userId + ' was not deleted.');
+              res.status(404).json({
+                message: ' was not deleted.'
+              });
             } else {
-              res.status(200).send(req.params.userId + ' was deleted.');
+              res.status(200).json({
+                message: "Your account (".concat(user.userName, ") was deleted successfully.")
+              });
             }
           })["catch"](function (error) {
-            res.status(500).send('Something went wrong.', error);
+            res.status(500).json('Something went wrong.', error);
           });
         case 2:
         case "end":

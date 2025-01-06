@@ -27,7 +27,7 @@ var routes = function routes(app) {
   }), (0, _expressValidator.check)('userName', 'userName contains non alphanumeric characters-not allowed.').isAlphanumeric(), (0, _expressValidator.check)('Password', 'Password is required').not().isEmpty(),
   // Is not empty
   (0, _expressValidator.check)('Email', 'Email does not appear to be valid.').isEmail()], _userControllers.registerUser);
-  app.route('/users/:userId').get(_passport["default"].authenticate('jwt', {
+  app.route('/users/me').get(_passport["default"].authenticate('jwt', {
     session: false
   }), _userControllers.getUserById).put(_passport["default"].authenticate('jwt', {
     session: false

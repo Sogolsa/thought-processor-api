@@ -45,7 +45,7 @@ const routes = (app) => {
     );
 
   app
-    .route('/users/:userId')
+    .route('/users/me')
     .get(passport.authenticate('jwt', { session: false }), getUserById)
     .put(
       passport.authenticate('jwt', { session: false }),
