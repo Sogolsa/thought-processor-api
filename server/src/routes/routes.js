@@ -52,7 +52,8 @@ const routes = (app) => {
       [
         // Validation logic to update
         check('userName')
-          .isLength({ min: 1 }) // Ensure userName is at least 4 characters
+          .optional()
+          .isLength({ min: 3 }) // Ensure userName is at least 3 characters
           .withMessage('userName must be at least 4 characters long.')
           .isAlphanumeric()
           .withMessage(
@@ -72,6 +73,7 @@ const routes = (app) => {
       (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+          console.log(errors.array());
           return res.status(422).json({ errors: errors.array() });
         }
         next(); // Proceed to updateUser if validation passed

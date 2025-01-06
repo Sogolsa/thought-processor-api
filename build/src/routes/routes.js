@@ -33,9 +33,9 @@ var routes = function routes(app) {
     session: false
   }), [
   // Validation logic to update
-  (0, _expressValidator.check)('userName').isLength({
-    min: 1
-  }) // Ensure userName is at least 4 characters
+  (0, _expressValidator.check)('userName').optional().isLength({
+    min: 3
+  }) // Ensure userName is at least 3 characters
   .withMessage('userName must be at least 4 characters long.').isAlphanumeric().withMessage('userName contains non-alphanumeric characters - not allowed.'), (0, _expressValidator.check)('Password').isLength({
     min: 6
   }) // Ensure Password is at least 6 characters
@@ -43,6 +43,7 @@ var routes = function routes(app) {
   .isEmail().withMessage('Email does not appear to be valid.')], function (req, res, next) {
     var errors = (0, _expressValidator.validationResult)(req);
     if (!errors.isEmpty()) {
+      console.log(errors.array());
       return res.status(422).json({
         errors: errors.array()
       });

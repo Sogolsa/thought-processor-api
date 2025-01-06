@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import models from '../models/models';
 const { User } = models;
 
-import { validationResult } from 'express-validator';
+import { check, validationResult } from 'express-validator';
 
 export const registerUser = async (req, res) => {
   // Check validation object for errors
@@ -69,9 +69,9 @@ export const updateUser = async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.user._id });
     if (!user) {
-      return res
-        .status(404)
-        .send('User not found or you do not have permission to update it.');
+      return res.status(404).json({
+        message: 'User not found or you do not have permission to update it.',
+      });
     }
 
     if (req.body.userName) {
@@ -90,16 +90,18 @@ export const updateUser = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .send('There was an error updating the user information.');
+      .json({ message: 'There was an error updating the user information.' });
   }
 };
 
 // deregister user
 export const deleteUser = async (req, res) => {
-  await User.findOneAndDelete(req.user._id) // Delete based on authenticated user's ID
+  await User.findOneAndDelete({ _id: req.user._id }) // Delete based on authenticated user's ID
     .then((user) => {
       if (!user) {
-        res.status(404).json({ message: ' was not deleted.' });
+        res
+          .status(404)
+          .json({ message: 'User not found. Account was not deleted.' });
       } else {
         res.status(200).json({
           message: `Your account (${user.userName}) was deleted successfully.`,
@@ -107,7 +109,9 @@ export const deleteUser = async (req, res) => {
       }
     })
     .catch((error) => {
-      res.status(500).json('Something went wrong.', error);
+      res
+        .status(500)
+        .json({ message: 'Something went wrong.', error: error.message });
     });
 };
 

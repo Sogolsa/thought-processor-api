@@ -153,7 +153,9 @@ var updateUser = exports.updateUser = /*#__PURE__*/function () {
             _context4.next = 6;
             break;
           }
-          return _context4.abrupt("return", res.status(404).send('User not found or you do not have permission to update it.'));
+          return _context4.abrupt("return", res.status(404).json({
+            message: 'User not found or you do not have permission to update it.'
+          }));
         case 6:
           if (req.body.userName) {
             user.userName = req.body.userName;
@@ -173,7 +175,9 @@ var updateUser = exports.updateUser = /*#__PURE__*/function () {
         case 15:
           _context4.prev = 15;
           _context4.t0 = _context4["catch"](0);
-          return _context4.abrupt("return", res.status(500).send('There was an error updating the user information.'));
+          return _context4.abrupt("return", res.status(500).json({
+            message: 'There was an error updating the user information.'
+          }));
         case 18:
         case "end":
           return _context4.stop();
@@ -192,11 +196,13 @@ var deleteUser = exports.deleteUser = /*#__PURE__*/function () {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
           _context5.next = 2;
-          return User.findOneAndDelete(req.user._id) // Delete based on authenticated user's ID
+          return User.findOneAndDelete({
+            _id: req.user._id
+          }) // Delete based on authenticated user's ID
           .then(function (user) {
             if (!user) {
               res.status(404).json({
-                message: ' was not deleted.'
+                message: 'User not found. Account was not deleted.'
               });
             } else {
               res.status(200).json({
@@ -204,7 +210,10 @@ var deleteUser = exports.deleteUser = /*#__PURE__*/function () {
               });
             }
           })["catch"](function (error) {
-            res.status(500).json('Something went wrong.', error);
+            res.status(500).json({
+              message: 'Something went wrong.',
+              error: error.message
+            });
           });
         case 2:
         case "end":
