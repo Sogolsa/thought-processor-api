@@ -1,13 +1,13 @@
-import passport from 'passport';
+import passport from "passport";
 
 // Local Strategy for logging in
-import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as LocalStrategy } from "passport-local";
 // JWTStrategy For Verifying JWT in Subsequent Requests after logging in
-import { Strategy as JWTStrategy, ExtractJwt } from 'passport-jwt';
-import models from './src/models/models';
+import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
+import models from "./src/models/models";
 const { User } = models;
 
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -16,23 +16,23 @@ dotenv.config();
 passport.use(
   new LocalStrategy(
     {
-      usernameField: 'userName',
-      passwordField: 'Password',
+      usernameField: "Email",
+      passwordField: "Password",
     },
-    async (username, password, done) => {
-      await User.findOne({ userName: username })
+    async (email, password, done) => {
+      await User.findOne({ Email: email.toLowerCase() })
         .then((user) => {
           if (!user) {
-            console.log('Incorrect userName.');
+            console.log("Incorrect userName.");
             return done(null, false, {
-              message: 'Incorrect username or password.',
+              message: "Incorrect email or password.",
             });
           }
           if (!user.validatePassword(password)) {
-            console.log('Incorrect password');
-            return done(null, false, { message: 'Incorrect Password.' });
+            console.log("Incorrect password");
+            return done(null, false, { message: "Incorrect Password." });
           }
-          console.log('finished');
+          console.log("finished");
           return done(null, user);
         })
         .catch((error) => {
@@ -53,7 +53,7 @@ const opts = {
 
 // Validate SECRET_KEY environment variable
 if (!process.env.SECRET_KEY) {
-  throw new Error('SECRET_KEY is not defined in environment variables');
+  throw new Error("SECRET_KEY is not defined in environment variables");
 }
 
 // Jwt Strategy for verifying subsequent requests after logging in

@@ -17,30 +17,30 @@ _dotenv["default"].config();
 
 // Passport Local Strategy for user authentication
 _passport["default"].use(new _passportLocal.Strategy({
-  usernameField: 'userName',
-  passwordField: 'Password'
+  usernameField: "Email",
+  passwordField: "Password"
 }, /*#__PURE__*/function () {
-  var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(username, password, done) {
+  var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(email, password, done) {
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
           _context.next = 2;
           return User.findOne({
-            userName: username
+            Email: email.toLowerCase()
           }).then(function (user) {
             if (!user) {
-              console.log('Incorrect userName.');
+              console.log("Incorrect userName.");
               return done(null, false, {
-                message: 'Incorrect username or password.'
+                message: "Incorrect email or password."
               });
             }
             if (!user.validatePassword(password)) {
-              console.log('Incorrect password');
+              console.log("Incorrect password");
               return done(null, false, {
-                message: 'Incorrect Password.'
+                message: "Incorrect Password."
               });
             }
-            console.log('finished');
+            console.log("finished");
             return done(null, user);
           })["catch"](function (error) {
             if (error) {
@@ -66,7 +66,7 @@ var opts = {
 
 // Validate SECRET_KEY environment variable
 if (!process.env.SECRET_KEY) {
-  throw new Error('SECRET_KEY is not defined in environment variables');
+  throw new Error("SECRET_KEY is not defined in environment variables");
 }
 
 // Jwt Strategy for verifying subsequent requests after logging in
