@@ -131,7 +131,7 @@ var getOwnThoughts = exports.getOwnThoughts = /*#__PURE__*/function () {
           _context3.next = 3;
           return Thought.find({
             User: req.user._id
-          });
+          }).populate("User", "userName Email");
         case 3:
           thoughts = _context3.sent;
           // Check if there are no thoughts
@@ -184,7 +184,7 @@ var getThoughtById = exports.getThoughtById = /*#__PURE__*/function () {
           _context4.prev = 1;
           thoughtId = req.params.thoughtId;
           _context4.next = 5;
-          return Thought.findById(thoughtId);
+          return Thought.findById(thoughtId).populate("User", "userName Email");
         case 5:
           thought = _context4.sent;
           if (thought) {

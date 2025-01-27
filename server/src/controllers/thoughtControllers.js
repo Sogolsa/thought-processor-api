@@ -81,7 +81,10 @@ export const updateThought = async (req, res) => {
 export const getOwnThoughts = async (req, res) => {
   try {
     // Find thoughts that belong to the logged-in user
-    const thoughts = await Thought.find({ User: req.user._id });
+    const thoughts = await Thought.find({ User: req.user._id }).populate(
+      "User",
+      "userName Email"
+    );
 
     // Check if there are no thoughts
     // if (thoughts.length === 0) {
@@ -117,7 +120,10 @@ export const getThoughtById = async (req, res) => {
   try {
     const thoughtId = req.params.thoughtId;
 
-    const thought = await Thought.findById(thoughtId);
+    const thought = await Thought.findById(thoughtId).populate(
+      "User",
+      "userName Email"
+    );
 
     if (!thought) {
       return res.status(404).json({ message: "Thought not found" });
