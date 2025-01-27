@@ -11,6 +11,7 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 var Thought = _models["default"].Thought;
+var User = _models["default"].User;
 // import { encrypt, decrypt } from '../utils/encryption';
 
 /* 
@@ -33,19 +34,27 @@ var addNewThought = exports.addNewThought = /*#__PURE__*/function () {
           return newThought.save();
         case 4:
           savedNewThought = _context.sent;
+          _context.next = 7;
+          return User.findByIdAndUpdate(req.user._id, {
+            $push: {
+              Thoughts: savedNewThought._id
+            }
+          });
+        case 7:
           return _context.abrupt("return", res.status(201).json(savedNewThought));
-        case 8:
-          _context.prev = 8;
+        case 10:
+          _context.prev = 10;
           _context.t0 = _context["catch"](1);
-          console.error('Error saving the new thought:', _context.t0);
+          console.error("Error saving the new thought:", _context.t0);
+          console.error("Stack trace:", _context.t0.stack);
 
           // Respond with a 500 status and error message
-          return _context.abrupt("return", res.status(500).send('There was an error saving the new thought!'));
-        case 12:
+          return _context.abrupt("return", res.status(500).send("There was an error saving the new thought!"));
+        case 15:
         case "end":
           return _context.stop();
       }
-    }, _callee, null, [[1, 8]]);
+    }, _callee, null, [[1, 10]]);
   }));
   return function addNewThought(_x, _x2) {
     return _ref.apply(this, arguments);
@@ -69,7 +78,7 @@ var updateThought = exports.updateThought = /*#__PURE__*/function () {
             _context2.next = 6;
             break;
           }
-          return _context2.abrupt("return", res.status(404).send('Thought not found or you do not have permission to update it.'));
+          return _context2.abrupt("return", res.status(404).send("Thought not found or you do not have permission to update it."));
         case 6:
           // Update only the fields provided in the request body
           if (req.body.thoughtName) {
@@ -100,8 +109,8 @@ var updateThought = exports.updateThought = /*#__PURE__*/function () {
         case 18:
           _context2.prev = 18;
           _context2.t0 = _context2["catch"](0);
-          console.error('Error updating the thought:', _context2.t0);
-          return _context2.abrupt("return", res.status(500).send('There was an error updating the thought!'));
+          console.error("Error updating the thought:", _context2.t0);
+          return _context2.abrupt("return", res.status(500).send("There was an error updating the thought!"));
         case 22:
         case "end":
           return _context2.stop();
@@ -137,8 +146,8 @@ var getOwnThoughts = exports.getOwnThoughts = /*#__PURE__*/function () {
         case 7:
           _context3.prev = 7;
           _context3.t0 = _context3["catch"](0);
-          console.error('Error fetching thoughts:', _context3.t0);
-          return _context3.abrupt("return", res.status(500).send('There was an error fetching thoughts.'));
+          console.error("Error fetching thoughts:", _context3.t0);
+          return _context3.abrupt("return", res.status(500).send("There was an error fetching thoughts."));
         case 11:
         case "end":
           return _context3.stop();
@@ -171,7 +180,7 @@ var getThoughtById = exports.getThoughtById = /*#__PURE__*/function () {
     return _regeneratorRuntime().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
-          console.log('Received request for thoughtId:', req.params.thoughtId);
+          console.log("Received request for thoughtId:", req.params.thoughtId);
           _context4.prev = 1;
           thoughtId = req.params.thoughtId;
           _context4.next = 5;
@@ -183,7 +192,7 @@ var getThoughtById = exports.getThoughtById = /*#__PURE__*/function () {
             break;
           }
           return _context4.abrupt("return", res.status(404).json({
-            message: 'Thought not found'
+            message: "Thought not found"
           }));
         case 8:
           res.status(200).json(thought);
@@ -194,7 +203,7 @@ var getThoughtById = exports.getThoughtById = /*#__PURE__*/function () {
           _context4.t0 = _context4["catch"](1);
           console.error(_context4.t0);
           res.status(500).json({
-            message: 'Server error'
+            message: "Server error"
           });
         case 15:
         case "end":
@@ -217,13 +226,13 @@ var deleteThought = exports.deleteThought = /*#__PURE__*/function () {
             User: req.user._id
           }).then(function (thought) {
             if (!thought) {
-              return res.status(404).send('Thought not found or you do not have permission to delete it.');
+              return res.status(404).send("Thought not found or you do not have permission to delete it.");
             }
             res.status(200).json({
-              message: req.params.thoughtId + ' was deleted.'
+              message: req.params.thoughtId + " was deleted."
             });
           })["catch"](function (err) {
-            res.status(500).send('Could not delete ' + req.params.thoughtId, err);
+            res.status(500).send("Could not delete " + req.params.thoughtId, err);
           });
         case 2:
         case "end":

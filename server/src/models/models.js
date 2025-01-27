@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import { encrypt, decrypt } from '../utils/encryption';
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import { encrypt, decrypt } from "../utils/encryption";
 
 const Schema = mongoose.Schema;
 
@@ -27,7 +27,8 @@ export const thoughtSchema = new Schema({
   },
   User: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
+    required: true,
   },
   created_date: {
     type: Date,
@@ -36,18 +37,18 @@ export const thoughtSchema = new Schema({
 });
 
 // Encrypt sensitive fields before saving with pre save middleware
-thoughtSchema.pre('save', function (next) {
-  if (this.thoughtName && !this.thoughtName.includes('|')) {
+thoughtSchema.pre("save", function (next) {
+  if (this.thoughtName && !this.thoughtName.includes("|")) {
     this.thoughtName = encrypt(this.thoughtName);
   }
 
-  if (this.Description && !this.Description.includes('|')) {
+  if (this.Description && !this.Description.includes("|")) {
     this.Description = encrypt(this.Description); // Encrypt Description
   }
 
   if (this.Emotions && Array.isArray(this.Emotions)) {
     this.Emotions = this.Emotions.map((emotion) => {
-      if (emotion && !emotion.includes('|')) {
+      if (emotion && !emotion.includes("|")) {
         return encrypt(emotion); // Encrypt if it's not encrypted yet
       }
       return emotion;
@@ -57,10 +58,10 @@ thoughtSchema.pre('save', function (next) {
   if (
     this.Problems &&
     Array.isArray(this.Problems) &&
-    !this.Problems.includes('|')
+    !this.Problems.includes("|")
   ) {
     this.Problems = this.Problems.map((problem) => {
-      if (problem && !problem.includes('|')) {
+      if (problem && !problem.includes("|")) {
         return encrypt(problem); // Encrypt if it's not encrypted yet
       }
       return problem;
@@ -70,16 +71,16 @@ thoughtSchema.pre('save', function (next) {
   if (
     this.possibleSolutions &&
     Array.isArray(this.possibleSolutions) &&
-    !this.possibleSolutions.includes('|')
+    !this.possibleSolutions.includes("|")
   ) {
     this.possibleSolutions = this.possibleSolutions.map((solution) => {
-      if (solution && !solution.includes('|')) {
+      if (solution && !solution.includes("|")) {
         return encrypt(solution); // Encrypt if it's not encrypted yet
       }
       return solution;
     });
   }
-  if (this.Affirmation && !this.Affirmation.includes('|')) {
+  if (this.Affirmation && !this.Affirmation.includes("|")) {
     this.Affirmation = encrypt(this.Affirmation); // Encrypt Affirmation
   }
   next();
@@ -127,7 +128,7 @@ export const userSchema = new Schema({
   Thoughts: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Thought',
+      ref: "Thought",
     },
   ],
 });
@@ -143,7 +144,7 @@ userSchema.methods.validatePassword = function (password) {
 };
 
 // Creating the models
-const Thought = mongoose.model('Thought', thoughtSchema);
-const User = mongoose.model('User', userSchema);
+const Thought = mongoose.model("Thought", thoughtSchema);
+const User = mongoose.model("User", userSchema);
 
 export default { Thought, User };

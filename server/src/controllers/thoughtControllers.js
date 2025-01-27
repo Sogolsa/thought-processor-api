@@ -1,5 +1,6 @@
-import models from '../models/models';
+import models from "../models/models";
 const { Thought } = models;
+const { User } = models;
 // import { encrypt, decrypt } from '../utils/encryption';
 
 /* 
@@ -16,13 +17,19 @@ export const addNewThought = async (req, res) => {
     // Save new thought to database
     const savedNewThought = await newThought.save();
 
+    // Add the new thought to the user's Thoughts array
+    await User.findByIdAndUpdate(req.user._id, {
+      $push: { Thoughts: savedNewThought._id },
+    });
+
     // Respond with newly created thought
     return res.status(201).json(savedNewThought);
   } catch (err) {
-    console.error('Error saving the new thought:', err);
+    console.error("Error saving the new thought:", err);
+    console.error("Stack trace:", err.stack);
 
     // Respond with a 500 status and error message
-    return res.status(500).send('There was an error saving the new thought!');
+    return res.status(500).send("There was an error saving the new thought!");
   }
 };
 
@@ -37,7 +44,7 @@ export const updateThought = async (req, res) => {
     if (!thought) {
       return res
         .status(404)
-        .send('Thought not found or you do not have permission to update it.');
+        .send("Thought not found or you do not have permission to update it.");
     }
 
     // Update only the fields provided in the request body
@@ -65,9 +72,9 @@ export const updateThought = async (req, res) => {
 
     return res.status(200).json(updatedThought);
   } catch (err) {
-    console.error('Error updating the thought:', err);
+    console.error("Error updating the thought:", err);
 
-    return res.status(500).send('There was an error updating the thought!');
+    return res.status(500).send("There was an error updating the thought!");
   }
 };
 
@@ -84,8 +91,8 @@ export const getOwnThoughts = async (req, res) => {
     // Send the found thoughts
     res.status(200).json(thoughts);
   } catch (err) {
-    console.error('Error fetching thoughts:', err);
-    return res.status(500).send('There was an error fetching thoughts.');
+    console.error("Error fetching thoughts:", err);
+    return res.status(500).send("There was an error fetching thoughts.");
   }
 };
 
@@ -105,7 +112,7 @@ export const getOwnThoughts = async (req, res) => {
 // };
 
 export const getThoughtById = async (req, res) => {
-  console.log('Received request for thoughtId:', req.params.thoughtId);
+  console.log("Received request for thoughtId:", req.params.thoughtId);
 
   try {
     const thoughtId = req.params.thoughtId;
@@ -113,13 +120,13 @@ export const getThoughtById = async (req, res) => {
     const thought = await Thought.findById(thoughtId);
 
     if (!thought) {
-      return res.status(404).json({ message: 'Thought not found' });
+      return res.status(404).json({ message: "Thought not found" });
     }
 
     res.status(200).json(thought);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -133,12 +140,12 @@ export const deleteThought = async (req, res) => {
         return res
           .status(404)
           .send(
-            'Thought not found or you do not have permission to delete it.'
+            "Thought not found or you do not have permission to delete it."
           );
       }
-      res.status(200).json({ message: req.params.thoughtId + ' was deleted.' });
+      res.status(200).json({ message: req.params.thoughtId + " was deleted." });
     })
     .catch((err) => {
-      res.status(500).send('Could not delete ' + req.params.thoughtId, err);
+      res.status(500).send("Could not delete " + req.params.thoughtId, err);
     });
 };

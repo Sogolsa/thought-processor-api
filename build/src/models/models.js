@@ -32,7 +32,8 @@ var thoughtSchema = exports.thoughtSchema = new Schema({
   },
   User: {
     type: _mongoose["default"].Schema.Types.ObjectId,
-    ref: 'User'
+    ref: "User",
+    required: true
   },
   created_date: {
     type: Date,
@@ -41,38 +42,38 @@ var thoughtSchema = exports.thoughtSchema = new Schema({
 });
 
 // Encrypt sensitive fields before saving with pre save middleware
-thoughtSchema.pre('save', function (next) {
-  if (this.thoughtName && !this.thoughtName.includes('|')) {
+thoughtSchema.pre("save", function (next) {
+  if (this.thoughtName && !this.thoughtName.includes("|")) {
     this.thoughtName = (0, _encryption.encrypt)(this.thoughtName);
   }
-  if (this.Description && !this.Description.includes('|')) {
+  if (this.Description && !this.Description.includes("|")) {
     this.Description = (0, _encryption.encrypt)(this.Description); // Encrypt Description
   }
   if (this.Emotions && Array.isArray(this.Emotions)) {
     this.Emotions = this.Emotions.map(function (emotion) {
-      if (emotion && !emotion.includes('|')) {
+      if (emotion && !emotion.includes("|")) {
         return (0, _encryption.encrypt)(emotion); // Encrypt if it's not encrypted yet
       }
       return emotion;
     }); // Encrypt each emotion
   }
-  if (this.Problems && Array.isArray(this.Problems) && !this.Problems.includes('|')) {
+  if (this.Problems && Array.isArray(this.Problems) && !this.Problems.includes("|")) {
     this.Problems = this.Problems.map(function (problem) {
-      if (problem && !problem.includes('|')) {
+      if (problem && !problem.includes("|")) {
         return (0, _encryption.encrypt)(problem); // Encrypt if it's not encrypted yet
       }
       return problem;
     });
   }
-  if (this.possibleSolutions && Array.isArray(this.possibleSolutions) && !this.possibleSolutions.includes('|')) {
+  if (this.possibleSolutions && Array.isArray(this.possibleSolutions) && !this.possibleSolutions.includes("|")) {
     this.possibleSolutions = this.possibleSolutions.map(function (solution) {
-      if (solution && !solution.includes('|')) {
+      if (solution && !solution.includes("|")) {
         return (0, _encryption.encrypt)(solution); // Encrypt if it's not encrypted yet
       }
       return solution;
     });
   }
-  if (this.Affirmation && !this.Affirmation.includes('|')) {
+  if (this.Affirmation && !this.Affirmation.includes("|")) {
     this.Affirmation = (0, _encryption.encrypt)(this.Affirmation); // Encrypt Affirmation
   }
   next();
@@ -123,7 +124,7 @@ var userSchema = exports.userSchema = new Schema({
   },
   Thoughts: [{
     type: _mongoose["default"].Schema.Types.ObjectId,
-    ref: 'Thought'
+    ref: "Thought"
   }]
 });
 
@@ -138,8 +139,8 @@ userSchema.methods.validatePassword = function (password) {
 };
 
 // Creating the models
-var Thought = _mongoose["default"].model('Thought', thoughtSchema);
-var User = _mongoose["default"].model('User', userSchema);
+var Thought = _mongoose["default"].model("Thought", thoughtSchema);
+var User = _mongoose["default"].model("User", userSchema);
 var _default = exports["default"] = {
   Thought: Thought,
   User: User

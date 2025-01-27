@@ -13,9 +13,10 @@ function _regeneratorRuntime() { "use strict"; /*! regenerator-runtime -- Copyri
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 var User = _models["default"].User;
+var Thought = _models["default"].Thought;
 var registerUser = exports.registerUser = /*#__PURE__*/function () {
   var _ref = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee(req, res) {
-    var errors, hashedPassword;
+    var errors, hashedPassword, existingUserName, existingEmail, newUser;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
@@ -29,39 +30,92 @@ var registerUser = exports.registerUser = /*#__PURE__*/function () {
             errors: errors.array()
           }));
         case 3:
-          hashedPassword = User.hashPassword(req.body.Password);
-          _context.next = 6;
+          _context.prev = 3;
+          // hash the password
+          hashedPassword = User.hashPassword(req.body.Password); // Check if the userName already exists
+          _context.next = 7;
           return User.findOne({
             userName: req.body.userName
-          }).then(function (user) {
-            if (user) {
-              return res.status(400).send(req.body.userName + ' already exists!');
-            } else {
-              User.create({
-                userName: req.body.userName,
-                Password: hashedPassword,
-                Email: req.body.Email
-              }).then(function (user) {
-                res.status(201).json(user);
-              })["catch"](function (error) {
-                console.log(error);
-                res.status(500).send('Error occurred when creating the user', error);
-              });
-            }
-          })["catch"](function (error) {
-            console.error(error);
-            res.status(500).send('Something went wrong: ' + error);
           });
-        case 6:
+        case 7:
+          existingUserName = _context.sent;
+          if (!existingUserName) {
+            _context.next = 11;
+            break;
+          }
+          console.log("Username already exists triggered for:", req.body.userName);
+          return _context.abrupt("return", res.status(409).json({
+            message: "Username already exists"
+          }));
+        case 11:
+          _context.next = 13;
+          return User.findOne({
+            Email: req.body.Email
+          });
+        case 13:
+          existingEmail = _context.sent;
+          if (!existingEmail) {
+            _context.next = 17;
+            break;
+          }
+          console.log("Email already exists triggered for:", req.body.Email);
+          return _context.abrupt("return", res.status(409).json({
+            message: "Email already exists"
+          }));
+        case 17:
+          _context.next = 19;
+          return User.create({
+            userName: req.body.userName,
+            Password: hashedPassword,
+            Email: req.body.Email.toLowerCase()
+          });
+        case 19:
+          newUser = _context.sent;
+          return _context.abrupt("return", res.status(201).json(newUser));
+        case 23:
+          _context.prev = 23;
+          _context.t0 = _context["catch"](3);
+          console.error("Error during user registration:", _context.t0);
+          res.status(500).send("An error occurred during registration.");
+        case 27:
         case "end":
           return _context.stop();
       }
-    }, _callee);
+    }, _callee, null, [[3, 23]]);
   }));
   return function registerUser(_x, _x2) {
     return _ref.apply(this, arguments);
   };
 }();
+
+// Check if the userName or Email already exists
+// await User.findOne({ userName: req.body.userName })
+//   .then((user) => {
+//     if (user) {
+//       return res
+//         .status(400)
+//         .send(req.body.userName + " User already exists!");
+//     } else {
+//       User.create({
+//         userName: req.body.userName,
+//         Password: hashedPassword,
+//         Email: req.body.Email,
+//       })
+//         .then((user) => {
+//           res.status(201).json(user);
+//         })
+//         .catch((error) => {
+//           console.log(error);
+//           res
+//             .status(500)
+//             .send("Error occurred when creating the user", error);
+//         });
+//     }
+//   })
+//   .catch((error) => {
+//     console.error(error);
+//     res.status(500).send("Something went wrong: " + error);
+//   });
 
 // get the list of all users
 var getUsers = exports.getUsers = /*#__PURE__*/function () {
@@ -81,8 +135,8 @@ var getUsers = exports.getUsers = /*#__PURE__*/function () {
         case 7:
           _context2.prev = 7;
           _context2.t0 = _context2["catch"](0);
-          console.error('Error fetching users:', _context2.t0);
-          return _context2.abrupt("return", res.status(500).send('There was an error fetching users.'));
+          console.error("Error fetching users:", _context2.t0);
+          return _context2.abrupt("return", res.status(500).send("There was an error fetching users."));
         case 11:
         case "end":
           return _context2.stop();
@@ -103,7 +157,8 @@ var getUserById = exports.getUserById = /*#__PURE__*/function () {
         case 0:
           _context3.prev = 0;
           _context3.next = 3;
-          return User.findById(req.user._id).select('-Password');
+          return User.findById(req.user._id).select("-Password") // Exclude the password field
+          .populate("Thoughts");
         case 3:
           user = _context3.sent;
           if (user) {
@@ -111,7 +166,7 @@ var getUserById = exports.getUserById = /*#__PURE__*/function () {
             break;
           }
           return _context3.abrupt("return", res.status(404).json({
-            message: 'User not found'
+            message: "User not found"
           }));
         case 6:
           res.status(200).json(user);
@@ -120,9 +175,9 @@ var getUserById = exports.getUserById = /*#__PURE__*/function () {
         case 9:
           _context3.prev = 9;
           _context3.t0 = _context3["catch"](0);
-          console.error('Error fetching user:', _context3.t0);
+          console.error("Error fetching user:", _context3.t0);
           res.status(500).json({
-            message: 'Server error'
+            message: "Server error"
           });
         case 13:
         case "end":
@@ -154,7 +209,7 @@ var updateUser = exports.updateUser = /*#__PURE__*/function () {
             break;
           }
           return _context4.abrupt("return", res.status(404).json({
-            message: 'User not found or you do not have permission to update it.'
+            message: "User not found or you do not have permission to update it."
           }));
         case 6:
           if (req.body.userName) {
@@ -176,7 +231,7 @@ var updateUser = exports.updateUser = /*#__PURE__*/function () {
           _context4.prev = 15;
           _context4.t0 = _context4["catch"](0);
           return _context4.abrupt("return", res.status(500).json({
-            message: 'There was an error updating the user information.'
+            message: "There was an error updating the user information."
           }));
         case 18:
         case "end":
@@ -192,40 +247,72 @@ var updateUser = exports.updateUser = /*#__PURE__*/function () {
 // deregister user
 var deleteUser = exports.deleteUser = /*#__PURE__*/function () {
   var _ref5 = _asyncToGenerator(/*#__PURE__*/_regeneratorRuntime().mark(function _callee5(req, res) {
+    var user;
     return _regeneratorRuntime().wrap(function _callee5$(_context5) {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
-          _context5.next = 2;
+          _context5.prev = 0;
+          _context5.next = 3;
           return User.findOneAndDelete({
             _id: req.user._id
-          }) // Delete based on authenticated user's ID
-          .then(function (user) {
-            if (!user) {
-              res.status(404).json({
-                message: 'User not found. Account was not deleted.'
-              });
-            } else {
-              res.status(200).json({
-                message: "Your account (".concat(user.userName, ") was deleted successfully.")
-              });
-            }
-          })["catch"](function (error) {
-            res.status(500).json({
-              message: 'Something went wrong.',
-              error: error.message
-            });
           });
-        case 2:
+        case 3:
+          user = _context5.sent;
+          if (!user) {
+            res.status(404).json({
+              message: "User not found. Account was not deleted."
+            });
+          }
+
+          // Delete all thoughts associated with the user
+          _context5.next = 7;
+          return Thought.deleteMany({
+            User: req.user._id
+          });
+        case 7:
+          res.status(200).json({
+            message: "Your account (".concat(user.userName, "} and all associated thoughts were deleted successfully.")
+          });
+          _context5.next = 13;
+          break;
+        case 10:
+          _context5.prev = 10;
+          _context5.t0 = _context5["catch"](0);
+          res.status(500).json({
+            message: "Something went wrong",
+            error: _context5.t0.message
+          });
+        case 13:
         case "end":
           return _context5.stop();
       }
-    }, _callee5);
+    }, _callee5, null, [[0, 10]]);
   }));
   return function deleteUser(_x9, _x10) {
     return _ref5.apply(this, arguments);
   };
 }();
+// export const deleteUser = async (req, res) => {
+//   await User.findOneAndDelete({ _id: req.user._id }) // Delete based on authenticated user's ID
+//     .then((user) => {
+//       if (!user) {
+//         res
+//           .status(404)
+//           .json({ message: "User not found. Account was not deleted." });
+//       } else {
+//         res.status(200).json({
+//           message: `Your account (${user.userName}) was deleted successfully.`,
+//         });
+//       }
+//     })
+//     .catch((error) => {
+//       res
+//         .status(500)
+//         .json({ message: "Something went wrong.", error: error.message });
+//     });
+// };
+
 var logoutUser = exports.logoutUser = function logoutUser(req, res) {
-  res.status(200).send('Successfully logged out. Please remove the token on the client side.');
+  res.status(200).send("Successfully logged out. Please remove the token on the client side.");
 };
 //# sourceMappingURL=userControllers.js.map
