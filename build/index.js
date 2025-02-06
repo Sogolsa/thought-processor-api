@@ -16,7 +16,10 @@ _dotenv["default"].config();
 var app = (0, _express["default"])();
 
 // Middleware setup
-app.use((0, _cors["default"])());
+app.use((0, _cors["default"])({
+  origin: "https://mind-organizer-easy-journaling.vercel.app/",
+  credentials: true // Allow cookies/auth headers
+}));
 app.use(_express["default"].urlencoded({
   extended: true
 })); // parses incoming requests with URL-encoded payloads (form data)
@@ -36,9 +39,9 @@ _mongoose["default"].connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(function () {
-  return console.log('MongoDB connected.');
+  return console.log("MongoDB connected.");
 })["catch"](function (err) {
-  return console.log('MongoDB connection error: ', err);
+  return console.log("MongoDB connection error: ", err);
 });
 app.use(function (req, res, next) {
   console.log("Incoming request: ".concat(req.method, " ").concat(req.url));
@@ -49,22 +52,22 @@ app.use(function (req, res, next) {
 (0, _routes["default"])(app);
 
 // First Endpoint
-app.use('/', function (req, res) {
-  res.send('Welcome to Thought Tracking Journal API!');
+app.use("/", function (req, res) {
+  res.send("Welcome to Thought Tracking Journal API!");
 });
 
 //Importing Yaml file
-var swaggerDocument = _yamljs["default"].load('./swagger.yaml');
+var swaggerDocument = _yamljs["default"].load("./swagger.yaml");
 
 //Setting up Swagger UI middleware
-app.use('/api-docs', _swaggerUiExpress["default"].serve, _swaggerUiExpress["default"].setup(swaggerDocument));
+app.use("/api-docs", _swaggerUiExpress["default"].serve, _swaggerUiExpress["default"].setup(swaggerDocument));
 app.use(function (req, res) {
-  console.log('Fallback handler triggered');
-  res.status(404).send('Route not found.');
+  console.log("Fallback handler triggered");
+  res.status(404).send("Route not found.");
 });
 app.use(function (err, req, res, next) {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).send("Something broke!");
 });
 
 // Port setup
