@@ -1,12 +1,12 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import swaggerUi from 'swagger-ui-express';
-import yaml from 'yamljs';
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import dotenv from "dotenv";
+import swaggerUi from "swagger-ui-express";
+import yaml from "yamljs";
 
-import routes from './src/routes/routes';
-import './passport';
+import routes from "./src/routes/routes";
+import "./passport";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -15,7 +15,12 @@ dotenv.config();
 const app = express();
 
 // Middleware setup
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://mind-organizer-easy-journaling.vercel.app/",
+    credentials: true, // Allow cookies/auth headers
+  })
+);
 app.use(express.urlencoded({ extended: true })); // parses incoming requests with URL-encoded payloads (form data)
 app.use(express.json()); //parses incoming requests with JSON payloads
 
@@ -34,8 +39,8 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log('MongoDB connected.'))
-  .catch((err) => console.log('MongoDB connection error: ', err));
+  .then(() => console.log("MongoDB connected."))
+  .catch((err) => console.log("MongoDB connection error: ", err));
 
 app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
@@ -46,24 +51,24 @@ app.use((req, res, next) => {
 routes(app);
 
 // First Endpoint
-app.use('/', (req, res) => {
-  res.send('Welcome to Thought Tracking Journal API!');
+app.use("/", (req, res) => {
+  res.send("Welcome to Thought Tracking Journal API!");
 });
 
 //Importing Yaml file
-const swaggerDocument = yaml.load('./swagger.yaml');
+const swaggerDocument = yaml.load("./swagger.yaml");
 
 //Setting up Swagger UI middleware
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((req, res) => {
-  console.log('Fallback handler triggered');
-  res.status(404).send('Route not found.');
+  console.log("Fallback handler triggered");
+  res.status(404).send("Route not found.");
 });
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).send("Something broke!");
 });
 
 // Port setup
