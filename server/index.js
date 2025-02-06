@@ -14,10 +14,18 @@ dotenv.config();
 // initializing express application
 const app = express();
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
+
 // Middleware setup
 app.use(
   cors({
-    origin: "https://mind-organizer-easy-journaling.vercel.app/",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true); // Allow request
+      } else {
+        callback(new Error("Not allowed by CORS")); // block request
+      }
+    },
     credentials: true, // Allow cookies/auth headers
   })
 );
