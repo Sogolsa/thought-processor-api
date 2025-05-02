@@ -3,12 +3,16 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.userSchema = exports.thoughtSchema = exports["default"] = void 0;
+exports.userSchema = exports.thoughtSchema = exports.gratitudeSchema = exports["default"] = void 0;
 var _mongoose = _interopRequireDefault(require("mongoose"));
 var _bcrypt = _interopRequireDefault(require("bcrypt"));
 var _encryption = require("../utils/encryption");
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 var Schema = _mongoose["default"].Schema;
+
+/*
+ * Creating the schemas for Thought model
+ */
 var thoughtSchema = exports.thoughtSchema = new Schema({
   thoughtName: {
     type: String,
@@ -109,6 +113,56 @@ thoughtSchema.methods.toJSON = function () {
   }
   return thought;
 };
+
+/**
+ * Creating the schema for gratefulness model
+ */
+var gratitudeSchema = exports.gratitudeSchema = new Schema({
+  message: {
+    type: String,
+    required: true
+  },
+  details: {
+    type: String,
+    required: false
+  },
+  User: {
+    type: _mongoose["default"].Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  created_date: {
+    type: Date,
+    "default": Date.now
+  }
+});
+
+// Encrypt before saving
+gratitudeSchema.pre("save", function (next) {
+  if (this.message && !this.message.includes("|")) {
+    this.message = (0, _encryption.encrypt)(this.message);
+  }
+  if (this.details && !this.details.includes("|")) {
+    this.details = (0, _encryption.encrypt)(this.details);
+  }
+  next();
+});
+
+// Decrypt before returning
+gratitudeSchema.methods.toJSON = function () {
+  var item = this.toObject();
+  if (item.message) {
+    item.message = (0, _encryption.decrypt)(item.message);
+  }
+  if (item.details) {
+    item.details = (0, _encryption.decrypt)(item.details);
+  }
+  return item;
+};
+
+/**
+ * Creating the schemas for User model
+ * */
 var userSchema = exports.userSchema = new Schema({
   userName: {
     type: String,
@@ -125,6 +179,10 @@ var userSchema = exports.userSchema = new Schema({
   Thoughts: [{
     type: _mongoose["default"].Schema.Types.ObjectId,
     ref: "Thought"
+  }],
+  Gratitudes: [{
+    type: _mongoose["default"].Schema.Types.ObjectId,
+    ref: "Gratitude"
   }]
 });
 
@@ -141,8 +199,10 @@ userSchema.methods.validatePassword = function (password) {
 // Creating the models
 var Thought = _mongoose["default"].model("Thought", thoughtSchema);
 var User = _mongoose["default"].model("User", userSchema);
+var Gratitude = _mongoose["default"].model("Gratitude", gratitudeSchema);
 var _default = exports["default"] = {
   Thought: Thought,
-  User: User
+  User: User,
+  Gratitude: Gratitude
 };
 //# sourceMappingURL=models.js.map

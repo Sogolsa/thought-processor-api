@@ -15,6 +15,14 @@ import {
   logoutUser,
 } from "../controllers/userControllers";
 
+import {
+  getGratitudeEntries,
+  getGratitudeById,
+  updateGratitude,
+  deleteGratitude,
+  addGratitude,
+} from "../controllers/gratitudeControllers";
+
 import passport from "passport";
 import loginRoute from "../../auth";
 import { check, validationResult } from "express-validator";
@@ -105,6 +113,18 @@ const routes = (app) => {
     .get(passport.authenticate("jwt", { session: false }), getThoughtById)
     .put(passport.authenticate("jwt", { session: false }), updateThought)
     .delete(passport.authenticate("jwt", { session: false }), deleteThought);
+
+  // Gratefulness endpoints
+  app
+    .route("/gratitude")
+    .post(passport.authenticate("jwt", { session: false }), addGratitude)
+    .get(passport.authenticate("jwt", { session: false }), getGratitudeEntries);
+
+  app
+    .route("/gratitude/:gratitudeId")
+    .get(passport.authenticate("jwt", { session: false }), getGratitudeById)
+    .put(passport.authenticate("jwt", { session: false }), updateGratitude)
+    .delete(passport.authenticate("jwt", { session: false }), deleteGratitude);
 
   console.log("Routes registered.");
 };

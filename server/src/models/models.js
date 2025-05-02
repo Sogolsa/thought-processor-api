@@ -4,6 +4,9 @@ import { encrypt, decrypt } from "../utils/encryption";
 
 const Schema = mongoose.Schema;
 
+/*
+ * Creating the schemas for Thought model
+ */
 export const thoughtSchema = new Schema({
   thoughtName: {
     type: String,
@@ -115,6 +118,55 @@ thoughtSchema.methods.toJSON = function () {
   return thought;
 };
 
+/**
+ * Creating the schema for gratefulness model
+ */
+export const gratitudeSchema = new Schema({
+  message: {
+    type: String,
+    required: true,
+  },
+  details: {
+    type: String,
+    required: false,
+  },
+  User: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  created_date: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+// Encrypt before saving
+gratitudeSchema.pre("save", function (next) {
+  if (this.message && !this.message.includes("|")) {
+    this.message = encrypt(this.message);
+  }
+  if (this.details && !this.details.includes("|")) {
+    this.details = encrypt(this.details);
+  }
+  next();
+});
+
+// Decrypt before returning
+gratitudeSchema.methods.toJSON = function () {
+  const item = this.toObject();
+  if (item.message) {
+    item.message = decrypt(item.message);
+  }
+  if (item.details) {
+    item.details = decrypt(item.details);
+  }
+  return item;
+};
+
+/**
+ * Creating the schemas for User model
+ * */
 export const userSchema = new Schema({
   userName: { type: String, required: true },
   Password: {
@@ -129,6 +181,12 @@ export const userSchema = new Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Thought",
+    },
+  ],
+  Gratitudes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Gratitude",
     },
   ],
 });
@@ -146,5 +204,6 @@ userSchema.methods.validatePassword = function (password) {
 // Creating the models
 const Thought = mongoose.model("Thought", thoughtSchema);
 const User = mongoose.model("User", userSchema);
+const Gratitude = mongoose.model("Gratitude", gratitudeSchema);
 
-export default { Thought, User };
+export default { Thought, User, Gratitude };
