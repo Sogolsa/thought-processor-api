@@ -184,7 +184,10 @@ var getThoughtById = exports.getThoughtById = /*#__PURE__*/function () {
           _context4.prev = 1;
           thoughtId = req.params.thoughtId;
           _context4.next = 5;
-          return Thought.findById(thoughtId).populate("User", "userName Email");
+          return Thought.findById({
+            _id: thoughtId,
+            User: req.user._id
+          }).populate("User", "userName Email");
         case 5:
           thought = _context4.sent;
           if (thought) {

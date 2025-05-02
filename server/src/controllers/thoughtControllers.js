@@ -120,10 +120,10 @@ export const getThoughtById = async (req, res) => {
   try {
     const thoughtId = req.params.thoughtId;
 
-    const thought = await Thought.findById(thoughtId).populate(
-      "User",
-      "userName Email"
-    );
+    const thought = await Thought.findById({
+      _id: thoughtId,
+      User: req.user._id,
+    }).populate("User", "userName Email");
 
     if (!thought) {
       return res.status(404).json({ message: "Thought not found" });

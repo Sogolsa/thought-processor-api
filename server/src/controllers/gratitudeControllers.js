@@ -42,10 +42,10 @@ export const getGratitudeById = async (req, res) => {
   try {
     const gratitudeId = req.params.gratitudeId;
 
-    const gratitude = await Gratitude.findById(gratitudeId).populate(
-      "User",
-      "userName Email"
-    );
+    const gratitude = await Gratitude.findById({
+      _id: gratitudeId,
+      User: req.user._id,
+    }).populate("User", "userName Email");
 
     if (!gratitude) {
       return res.status(404).send("Gratefulness entry not found");

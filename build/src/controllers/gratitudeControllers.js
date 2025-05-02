@@ -101,7 +101,10 @@ var getGratitudeById = exports.getGratitudeById = /*#__PURE__*/function () {
           _context3.prev = 0;
           gratitudeId = req.params.gratitudeId;
           _context3.next = 4;
-          return Gratitude.findById(gratitudeId).populate("User", "userName Email");
+          return Gratitude.findById({
+            _id: gratitudeId,
+            User: req.user._id
+          }).populate("User", "userName Email");
         case 4:
           gratitude = _context3.sent;
           if (gratitude) {
