@@ -120,7 +120,7 @@ export const getThoughtById = async (req, res) => {
   try {
     const thoughtId = req.params.thoughtId;
 
-    const thought = await Thought.findById({
+    const thought = await Thought.findOne({
       _id: thoughtId,
       User: req.user._id,
     }).populate("User", "userName Email");

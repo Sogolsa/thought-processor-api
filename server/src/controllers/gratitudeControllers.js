@@ -42,7 +42,7 @@ export const getGratitudeById = async (req, res) => {
   try {
     const gratitudeId = req.params.gratitudeId;
 
-    const gratitude = await Gratitude.findById({
+    const gratitude = await Gratitude.findOne({
       _id: gratitudeId,
       User: req.user._id,
     }).populate("User", "userName Email");
